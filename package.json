@@ -8,7 +8,7 @@
     "deploy": "surge --project public",
     "doc": "rimraf doc && groc",
     "lint": "standard --verbose | snazzy",
-    "postinstall": "rimraf .jshintrc .jshintignore",
+    "postinstall": "rimraf .jshintrc .jshintignore && npm run doc",
     "start": "hjs-dev-server",
     "start:d": "webpack-dashboard -p 3002 -- hjs-dev-server",
     "test": "mocha",
