@@ -16,6 +16,8 @@ import HomeScreen from './containers/home-screen'
 import SettingsScreen from './containers/settings-screen'
 import store, { loggedIn } from './store'
 
+import './lib/clock'
+
 function requireAuth (nextState, replace) {
   if (!loggedIn()) {
     replace('/')

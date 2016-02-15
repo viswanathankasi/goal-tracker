@@ -14,15 +14,23 @@ if (module.hot) {
   })
 }
 
-function checkClock () {
-  const now = new Date()
-  console.log('checking', now)
+const HISTORY_TRIGGER_TIME = process.env.NODE_ENV === 'production'
+  ? '00:00:00'
+  : moment().add(10, 'seconds').format('HH:mm:ss')
 
-  // Votre code ici
+function checkClock () {
+  const now = moment().format('HH:mm:ss')
+
+  if (now === HISTORY_TRIGGER_TIME) {
+    store.dispatch(closeDay())
+  }
 }
 
 function checkForTodaysFirstUse () {
-  // Votre code ici, puis :
+  const storesLastDay = store.getState().today
+  if (storesLastDay && moment(storesLastDay).isBefore(moment(), 'day')) {
+    store.dispatch(closeDay())
+  }
 
   clock = setInterval(checkClock, 1000)
 }
