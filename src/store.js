@@ -37,4 +37,8 @@ const state = {
   ]
 }
 
+export function loggedIn () {
+  return state.currentUser != null
+}
+
 export default state
