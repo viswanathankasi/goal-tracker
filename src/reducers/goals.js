@@ -3,14 +3,26 @@ import { ADD_GOAL, REMOVE_GOAL, UPDATE_GOAL } from '../action-creators'
 export default function goals (state = [], action) {
   switch (action.type) {
     case ADD_GOAL: {
-      // Votre code ici
+      const { name, target, units } = action
+      // L’approche un poil moins « pure fonctionnelle » serait :
+      // ```js
+      // const id = Math.max(...state.map((goal) => goal.id), -1) + 1
+      // ````
+      const id = state.reduce((max, { id }) => max > id ? max : id, -1) + 1
+      return [...state, { id, name, target, units }]
     }
 
     case REMOVE_GOAL:
-      // Votre code ici
+      return state.filter(({ id }) => id !== action.id)
 
     case UPDATE_GOAL: {
-      // Votre code ici
+      const { id, name, target, units } = action
+      const newGoal = { id, name, target, units }
+      if (state.find(({ id }) => id === action.id)) {
+        return state.map((goal) => goal.id === id ? newGoal : goal)
+      }
+
+      return [...state, newGoal]
     }
 
     default:
