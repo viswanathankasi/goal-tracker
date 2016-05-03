@@ -1,3 +1,5 @@
+import fetch from 'isomorphic-fetch'
+
 // Goal settings management
 
 export const ADD_GOAL = '@@GOALTRACKER/GOALS_ADD'
@@ -20,7 +22,9 @@ export function updateGoal (id, name, target, units) {
 
 export const CLEAR_HISTORY = '@@GOALTRACKER/HISTORY_CLEAR'
 export const CLOSE_DAY = '@@GOALTRACKER/CLOSE_DAY'
-export const LOGIN = '@@GOALTRACKER/AUTH_LOGIN'
+export const LOGIN_FAILURE = '@@GOALTRACKER/AUTH_LOGIN_FAILURE'
+export const LOGIN_START = '@@GOALTRACKER/AUTH_LOGIN_START'
+export const LOGIN_SUCCESS = '@@GOALTRACKER/AUTH_LOGIN_SUCCESS'
 export const LOGOUT = '@@GOALTRACKER/AUTH_LOGOUT'
 export const PROGRESS = '@@GOALTRACKER/PROGRESS'
 
@@ -33,7 +37,42 @@ export function closeDay () {
 }
 
 export function logIn (email, password) {
-  return { type: LOGIN, email, password }
+  return (dispatch) => {
+    dispatch(logInStart())
+
+    return fetch('http://localhost:3001/sessions', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email, password })
+    })
+    .then((res) => res.json())
+    .then(({ status }) => {
+      if (status === 'authenticated') {
+        dispatch(logInSuccess(email))
+      } else {
+        dispatch(logInFailure())
+      }
+    })
+    .catch((err) => {
+      dispatch(logInFailure())
+      console.error(err)
+    })
+  }
+}
+
+function logInFailure () {
+  return { type: LOGIN_FAILURE }
+}
+
+function logInStart () {
+  return { type: LOGIN_START }
+}
+
+function logInSuccess (email) {
+  return { type: LOGIN_SUCCESS, email }
 }
 
 export function logOut () {
